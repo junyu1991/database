@@ -1,0 +1,17 @@
+mongo:
+  host: 127.0.0.1
+  port: 27017
+  username: name
+  password: password
+  userdb: admin
+
+file:
+  mongo:
+    database: files
+    collection: file
+  scanpath: E:\\code, F:\\code\java, D:\\
+
+ftp:
+  url: 172.18.2.3
+  user: anyone
+  password: password
