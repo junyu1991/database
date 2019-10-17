@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * <b>修改记录：</b>
@@ -32,6 +33,15 @@ public class BasicDao {
 
     public<T> T findById(Object ID, Class<T> clazz) {
         return mongoTemplate.findById(ID, clazz);
+    }
+
+    public<T> List<T> getAll(String collection, Class<T> clazz) {
+        return this.mongoTemplate.findAll(clazz, collection);
+    }
+
+
+    public<T> List<T> getAll(Class<T> clazz) {
+        return this.mongoTemplate.findAll(clazz);
     }
 
 }

@@ -3,6 +3,12 @@ package com.yujun.database.mongodb.file.dao;
 import com.sun.istack.internal.NotNull;
 import com.yujun.database.model.FileInfo;
 import com.yujun.database.model.VideoInfo;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.FindAndReplaceOptions;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,7 +34,14 @@ import java.util.Optional;
  *
  * </p>
  */
+@Slf4j
+@Configuration
 public class FileActionDao extends BasicDao {
+
+    @Bean(name = "fileActionDao1")
+    public FileActionDao fileActionDao() {
+        return this;
+    }
 
     /**
      * 根据文件名查询文件
@@ -70,6 +83,80 @@ public class FileActionDao extends BasicDao {
                 break;
         }
         return result;
+    }
+
+
+    /**
+     * 查询size个FileInfo
+     * @author: yujun
+     * @date: 2019/10/17
+     * @description: TODO
+     * @param size
+     * @return: {@link List< FileInfo>}
+     * @exception:
+    */
+    public List<FileInfo> queryFileInfo(int size, long fileSize, String filename, String orderFiled) {
+        Query query = new Query();
+        Criteria criteria = Criteria.where("fileSize").lt(fileSize);
+        criteria.andOperator(criteria.where("filename").regex(filename));
+//        Criteria criteria1 = Criteria.where("filename").regex(filename);
+        query.addCriteria(criteria);
+//        query.addCriteria(criteria1);
+        query.limit(size);
+        query.with(Sort.by(orderFiled, "filename"));
+        return this.getMongoTemplate().find(query, FileInfo.class, "file");
+    }
+
+    /**
+     * 按照条件分页查询
+     * @author: admin
+     * @date: 2019/10/17
+     * @param pageSize
+     * @param pageNo
+     * @param filename
+     * @param orderFiled
+     * @return: {@link List< FileInfo>}
+     * @exception:
+    */
+    public List<FileInfo> queryPageFileInfo(int pageSize, int pageNo, String filename, String orderFiled) {
+        Query query = new Query();
+        Criteria criteria = Criteria.where("filename").regex(filename);
+        query.addCriteria(criteria);
+        Pageable pageable = new QueryPage(pageNo, pageSize, Sort.by(orderFiled));
+        query.with(pageable);
+        return this.getMongoTemplate().find(query, FileInfo.class, "file");
+    }
+
+    /**
+     * 查找并删除第一个符合查找条件的文档
+     * @author: admin
+     * @date: 2019/10/17
+     * @param filename
+     * @return: {@link FileInfo}
+     * @exception:
+    */
+    public FileInfo findAndRemove(String filename) {
+        FileInfo andRemove = this.getMongoTemplate().findAndRemove(Query.query(Criteria.where("filename").is(filename)), FileInfo.class, "file");
+        return andRemove;
+    }
+
+    /**
+     * 查询相同文件大小的不同文件信息，使用filename区分
+     * @author: admin
+     * @date: 2019/10/17
+     * @param fileSize
+     * @return: {@link List< String>}
+     * @exception:
+    */
+    public List<FileInfo> queryFileInfoByFileSize(long fileSize) {
+        Query query = Query.query(Criteria.where("fileSize").is(fileSize));
+        List<FileInfo> filename = null;
+        try {
+            filename = this.getMongoTemplate().query(FileInfo.class).inCollection("file").distinct("filePath").matching(query).as(FileInfo.class).all();
+        } catch (DataAccessException e) {
+            log.error("Get result failed.", e);
+        }
+        return filename;
     }
 
     /** 
@@ -254,4 +341,5 @@ public class FileActionDao extends BasicDao {
         Query query = this.makeQuery(filter);
         this.getMongoTemplate().findAllAndRemove(query, collectionName);
     }
+
 }

@@ -28,7 +28,7 @@ public class Application {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(Application.class, args);
-        FileManage fm = run.getBean("fileManager", FileManage.class);
-        fm.startScan();
+        /*FileManage fm = run.getBean("fileManager", FileManage.class);
+        fm.startScan();*/
     }
 }
