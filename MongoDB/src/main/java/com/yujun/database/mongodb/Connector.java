@@ -42,6 +42,8 @@ public class Connector extends AbstractMongoConfiguration {
     private String userDb;
     @Value("${file.mongo.database}")
     private String database;
+    @Value("$file.mongo.geodatabase")
+    private String geoDatabase;
 
     /**
      * 从配置文件中获取mongodb host以及port初始化，返回client
@@ -76,6 +78,14 @@ public class Connector extends AbstractMongoConfiguration {
         MappingMongoConverter mappingMongoConverter = super.mappingMongoConverter();
         mappingMongoConverter.setTypeMapper(new DefaultMongoTypeMapper(null));
         mongoTemplate = new MongoTemplate(new SimpleMongoDbFactory(mongoClient(), this.getDatabaseName()), mappingMongoConverter);
+        return mongoTemplate;
+    }
+    @Bean(name = "geoMongoTemplate")
+    public MongoTemplate geoMongoTemplate() throws Exception {
+        MongoTemplate mongoTemplate = null;
+        MappingMongoConverter mappingMongoConverter = super.mappingMongoConverter();
+        mappingMongoConverter.setTypeMapper(new DefaultMongoTypeMapper(null));
+        mongoTemplate = new MongoTemplate(new SimpleMongoDbFactory(mongoClient(), geoDatabase), mappingMongoConverter);
         return mongoTemplate;
     }
 

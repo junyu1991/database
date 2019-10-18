@@ -9,6 +9,7 @@ file:
   mongo:
     database: files
     collection: file
+    geodatabase: geo
   scanpath: E:\\code, F:\\code\java, D:\\
 
 ftp:
