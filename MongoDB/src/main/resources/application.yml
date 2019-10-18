@@ -10,6 +10,7 @@ file:
     database: files
     collection: file
     geodatabase: geo
+    textdatabase: text
   scanpath: E:\\code, F:\\code\java, D:\\
 
 ftp:
