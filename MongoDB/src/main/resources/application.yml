@@ -1,5 +1,5 @@
 mongo:
-  host: 127.0.0.1
+  host: 192.168.0.102
   port: 27017
   username: name
   password: password
@@ -12,8 +12,3 @@ file:
     geodatabase: geo
     textdatabase: text
   scanpath: E:\\code, F:\\code\java, D:\\
-
-ftp:
-  url: 172.18.2.3
-  user: anyone
-  password: password
