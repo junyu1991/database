@@ -1,9 +1,13 @@
-package com.yujun.database.examplequery;/**
+package com.yujun.database.examplequery;
+
+import org.springframework.data.repository.query.QueryByExampleExecutor;
+
+/**
  * <b>修改记录：</b>
  * <p>
  * <li>
  * <p>
- * ---- admin 2019/10/21
+ * ---- yujun 2019/10/21
  * </li>
  * </p>
  *
@@ -12,14 +16,5 @@ package com.yujun.database.examplequery;/**
  *
  * </p>
  */
-
-import org.springframework.data.repository.query.QueryByExampleExecutor;
-
-/**
- @author admin
- @version 1.0.0
- @date 2019/10/21 15:14
- @description TODO
- **/
 public interface PersonQuerybyExampleExecutor extends QueryByExampleExecutor<Person>{
 }
