@@ -4,6 +4,8 @@ import com.mongodb.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoClientFactoryBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -98,6 +100,17 @@ public class Connector extends AbstractMongoConfiguration {
         mappingMongoConverter.setTypeMapper(new DefaultMongoTypeMapper(null));
         mongoTemplate = new MongoTemplate(new SimpleMongoDbFactory(mongoClient(), textDatabase), mappingMongoConverter);
         return mongoTemplate;
+    }
+
+    @Bean
+    public MongoDbFactory mongoDbFactory() {
+        MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(mongoClient(), database);
+        return mongoDbFactory;
+    }
+
+    @Bean
+    public MongoTransactionManager mongoTransactionManager() {
+        return new MongoTransactionManager(mongoDbFactory());
     }
 
     protected String getDatabaseName() {

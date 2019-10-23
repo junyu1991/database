@@ -7,9 +7,13 @@ import com.yujun.database.model.FileInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.SessionSynchronization;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -89,8 +93,30 @@ public class SessionUsage {
                 });
         session.close();
     }
-    
-    
+
+    /**
+     * 使用TransactionTemplate进行事务控制
+     * @author: yujun
+     * @date: 2019/10/23
+     * @param fileInfos
+     * @return:
+     * @exception:
+    */
+    public void workWithTransactionTemplate(List<FileInfo> fileInfos) {
+        //在运行过程中使用setSessionSynchronization()方法修改MongoTemplate状态会导致线程安全问题
+        mongoTemplate.setSessionSynchronization(SessionSynchronization.ALWAYS);
+
+        //创建TransactionTemplate对象，需要使用PlatformTransactionManager，目前暂时不清楚PlatformTransactionManager的初始化
+        TransactionTemplate transactionTemplate = new TransactionTemplate();
+
+        //使用transactionTemplate执行操作时，事务控制是自动被注册好的
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                mongoTemplate.insert(fileInfos);
+            }
+        });
+    }
 
 
 }
