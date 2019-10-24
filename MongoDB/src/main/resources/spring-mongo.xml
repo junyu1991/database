@@ -31,6 +31,8 @@
         <!-- Mongo集群配置 -->
         <mongo:mongo-client id="replicaSetMongo" replica-set="127.0.0.1:27017,localhost:27018"/>
 
+        <!-- MongoDBFactory配置 -->
+        <mongo:db-factory id="mongoDbFactoryXMl" dbname="database" mongo-ref="mongoClient"/>
 
     </beans>
 </beans>

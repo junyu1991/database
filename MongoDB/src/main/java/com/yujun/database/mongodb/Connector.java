@@ -1,7 +1,7 @@
 package com.yujun.database.mongodb;
 
-import ch.qos.logback.core.rolling.helper.IntegerTokenConverter;
 import com.mongodb.*;
+import com.mongodb.client.MongoDatabase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,6 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -157,6 +156,7 @@ public class Connector extends AbstractMongoConfiguration {
                 .maxWaitTime(maxWaitTime)
                 .maxConnectionIdleTime(maxConnectionIdleTime)
                 .socketTimeout(socketTimeout)
+                .writeConcern(WriteConcern.ACKNOWLEDGED)//设置WriteConcern
                 .build();
         return mongoClientOptions;
     }
@@ -182,15 +182,58 @@ public class Connector extends AbstractMongoConfiguration {
         return mongoClientFactoryBean;
     }
 
+    /**
+     * 初始化MongoDbFactory
+     * @author: yujun
+     * @date: 2019/10/24
+     * @param
+     * @return: {@link org.springframework.data.mongodb.MongoDbFactory}
+     * @exception:
+    */
+    @Bean(name = "mongoDbFactory")
+    public MongoDbFactory mongoDbFactory() {
+        SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(mongoClient(), database);
+        MongoDatabase db = simpleMongoDbFactory.getDb();
+        return simpleMongoDbFactory;
+    }
+
+    /**
+     * 使用mongoClient以及数据库名初始化MongoTemplate
+     * @author: yujun
+     * @date: 2019/10/24
+     * @param
+     * @return: {@link org.springframework.data.mongodb.core.MongoTemplate}
+     * @exception:
+    */
+    public MongoTemplate simpleMongoTemplate() {
+        return new MongoTemplate(mongoClient(), database);
+    }
+
+    /**
+     * 使用MongoDbFactory初始化MongoTemplate
+     * @author: yujun
+     * @date: 2019/10/24
+     * @param
+     * @return: {@link org.springframework.data.mongodb.core.MongoTemplate}
+     * @exception:
+    */
     @Bean(name = "mongoTemplate")
     public MongoTemplate mongoTemplate() throws Exception {
-        MongoTemplate mongoTemplate = new MongoTemplate(mongoClient(), this.getDatabaseName());
-        mongoTemplate = new MongoTemplate(new SimpleMongoDbFactory(mongoClient(), this.getDatabaseName()));
-        MappingMongoConverter mappingMongoConverter = super.mappingMongoConverter();
+        MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory());
+    /*    MappingMongoConverter mappingMongoConverter = super.mappingMongoConverter();
         mappingMongoConverter.setTypeMapper(new DefaultMongoTypeMapper(null));
-        mongoTemplate = new MongoTemplate(new SimpleMongoDbFactory(mongoClient(), this.getDatabaseName()), mappingMongoConverter);
+        mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter);*/
         return mongoTemplate;
     }
+
+    /**
+     * 使用MongoDbFactory以及MappingMongoConverter初始化MongoTemplate
+     * @author: yujun
+     * @date: 2019/10/24
+     * @param
+     * @return: {@link org.springframework.data.mongodb.core.MongoTemplate}
+     * @exception:
+    */
     @Bean(name = "geoMongoTemplate")
     public MongoTemplate geoMongoTemplate() throws Exception {
         MongoTemplate mongoTemplate = null;
@@ -217,12 +260,6 @@ public class Connector extends AbstractMongoConfiguration {
         mongoTemplate = new MongoTemplate(new SimpleMongoDbFactory(mongoClient(), textDatabase), mappingMongoConverter);
         mongoTemplate.setSessionSynchronization(SessionSynchronization.ALWAYS);
         return mongoTemplate;
-    }
-
-    @Bean
-    public MongoDbFactory mongoDbFactory() {
-        MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(mongoClient(), database);
-        return mongoDbFactory;
     }
 
     /**
