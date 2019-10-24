@@ -1,9 +1,18 @@
 mongo:
   host: 192.168.0.102
   port: 27017
+  hosts: 192.168.0.102:21017, 192.168.0.107:21017
   username: name
   password: password
   userdb: admin
+  connect:
+    connectionsPerHost: 4
+    threadsAllowedToBlockForConnectionMultiplier: 4
+    connectTimeout: 1500
+    maxWaitTime: 1500
+    maxConnectionIdleTime: 1500
+    socketTimeout: 5000
+
 
 file:
   mongo:

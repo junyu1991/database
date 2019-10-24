@@ -7,6 +7,7 @@ import com.yujun.database.model.FileInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.SessionSynchronization;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -40,6 +41,9 @@ public class SessionUsage {
 
     @Autowired
     private MongoClient mongoClient;
+
+    @Autowired
+    private MongoTransactionManager mongoTransactionManager;
     
     /**
      * 使用mongo session进行简单操作
@@ -107,7 +111,7 @@ public class SessionUsage {
         mongoTemplate.setSessionSynchronization(SessionSynchronization.ALWAYS);
 
         //创建TransactionTemplate对象，需要使用PlatformTransactionManager，目前暂时不清楚PlatformTransactionManager的初始化
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
+        TransactionTemplate transactionTemplate = new TransactionTemplate(mongoTransactionManager);
 
         //使用transactionTemplate执行操作时，事务控制是自动被注册好的
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
