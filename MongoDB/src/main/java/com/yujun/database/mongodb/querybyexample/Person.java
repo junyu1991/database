@@ -1,4 +1,4 @@
-package com.yujun.database.examplequery;
+package com.yujun.database.mongodb.querybyexample;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

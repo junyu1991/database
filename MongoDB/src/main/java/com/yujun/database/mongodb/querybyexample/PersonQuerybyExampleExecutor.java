@@ -1,4 +1,4 @@
-package com.yujun.database.examplequery;
+package com.yujun.database.mongodb.querybyexample;
 
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 

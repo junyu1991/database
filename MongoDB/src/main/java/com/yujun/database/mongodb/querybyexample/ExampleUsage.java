@@ -1,4 +1,4 @@
-package com.yujun.database.examplequery;
+package com.yujun.database.mongodb.querybyexample;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -37,7 +37,7 @@ public class ExampleUsage {
      * @date: 2019/10/21
      * @param firstName
      * @param lastName
-     * @return: {@link Example< Person>}
+     * @return: {@link Example<  Person >}
      * @exception:
     */
     public Example<Person> makeUpPersonExample(String firstName, String lastName) {
@@ -54,7 +54,7 @@ public class ExampleUsage {
 
     /**
      * 构建ExampleMatcher
-     * @author: admin
+     * @author: yujun
      * @date: 2019/10/21
      * @param
      * @return: {@link ExampleMatcher}
@@ -88,7 +88,7 @@ public class ExampleUsage {
      * @author: admin
      * @date: 2019/10/21
      * @param probe
-     * @return: {@link List< Person>}
+     * @return: {@link List<  Person >}
      * @exception:
     */
     public List<Person> findPeople(Person probe) {

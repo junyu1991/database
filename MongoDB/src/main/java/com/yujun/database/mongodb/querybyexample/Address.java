@@ -1,4 +1,4 @@
-package com.yujun.database.examplequery;
+package com.yujun.database.mongodb.querybyexample;
 
 import lombok.Getter;
 import lombok.Setter;
